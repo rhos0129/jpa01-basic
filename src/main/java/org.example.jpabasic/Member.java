@@ -13,8 +13,8 @@ public class Member {
     @Column(name = "USERNAME")
     private String username;
 
-    @ManyToOne // 다대일 단방향
-    @JoinColumn(name = "TEAM_ID")
+    @ManyToOne // 일대다 양방향
+    @JoinColumn(insertable = false, updatable = false) // 억지로 읽기전용으로 만든다.
     private Team team;
 
     public Long getId() {

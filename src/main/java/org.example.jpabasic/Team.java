@@ -14,7 +14,8 @@ public class Team {
     @Column(name = "NAME")
     private String name;
 
-    @OneToMany(mappedBy = "team") // 다대일 양방향
+    @OneToMany // 일대다 단방향
+    @JoinColumn(name = "TEAM_ID") // 필수(생략한다면 중간테이블을 생성한다)
     List<Member> members = new ArrayList<>();
 
     public Long getId() {
