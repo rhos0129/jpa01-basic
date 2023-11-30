@@ -32,12 +32,18 @@ public class JpabasicMain {
             em.flush();
             em.clear();
 
-            // 조회
+            // 조회 - 단방향
             Member findMember = em.find(Member.class, member.getId());
 
 //            Long findTeamId = findMember.getTeamId();
 //            Team findTeam = em.find(Team.class, findTeamId); // 연관관계가 필요한 이유 : Join을 이용하지 않고 각각 select문 2번
             Team findTeam = findMember.getTeam(); // 연관관계 적용 : Join을 이용하여 select문 1번
+
+            // 조회 - 양방향
+            List<Member> members = findTeam.getMembers();
+            for (Member m : members) {
+                System.out.println("m = " + m.getUsername());
+            }
 
 
             tx.commit();
