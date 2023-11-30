@@ -17,33 +17,15 @@ public class JpabasicMain {
         tx.begin();
 
         try {
-//            //저장
-//            Member member = new Member();
-////            member.setId(1L);
-////            member.setName("HelloA");
-//            member.setId(2L);
-//            member.setName("HelloB");
-//            em.persist(member);
+            // 비영속
+            Member member = new Member();
+            member.setId(100L);
+            member.setName("HelloJPA");
 
-//            // 조회
-//            Member findMember = em.find(Member.class, 1L);
-//            System.out.println("findMember.name = " + findMember.getName());
-//
-//            // 수정
-//            findMember.setName("HelloJPA");
-//            System.out.println("findMember.name = " + findMember.getName());
-
-            // 삭제
-//            em.remove(findMember);
-
-            // 조회 - JPQL
-            List<Member> result = em.createQuery("select m from Member as m", Member.class)
-                    .setFirstResult(1)
-                    .setMaxResults(1)
-                    .getResultList();
-            for (Member member : result) {
-                System.out.println("member.name = " + member.getName());
-            }
+            //영속
+            System.out.println("=== BEFORE ===");
+            em.persist(member); // DB에 쿼리가 바로 날라가는 것이 아니다.
+            System.out.println("=== AFTER === ");
 
             tx.commit();
 
