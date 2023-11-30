@@ -17,6 +17,10 @@ public class Member {
     @JoinColumn(insertable = false, updatable = false) // 억지로 읽기전용으로 만든다.
     private Team team;
 
+    @OneToOne // 일대일 단방향 - 주테이블에 외래키
+    @JoinColumn(name = "LOCKER_ID")
+    private Locker locker;
+
     public Long getId() {
         return id;
     }
@@ -41,4 +45,11 @@ public class Member {
         this.team = team;
     }
 
+    public Locker getLocker() {
+        return locker;
+    }
+
+    public void setLocker(Locker locker) {
+        this.locker = locker;
+    }
 }
