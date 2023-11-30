@@ -13,10 +13,7 @@ public class Member {
     @Column(name = "USERNAME")
     private String username;
 
-//    @Column(name = "TEAM_ID")
-//    private Long teamId;
-
-    @ManyToOne // member입장에서 다대일관계
+    @ManyToOne // 다대일 단방향
     @JoinColumn(name = "TEAM_ID")
     private Team team;
 
@@ -36,14 +33,6 @@ public class Member {
         this.username = username;
     }
 
-//    public Long getTeamId() {
-//        return teamId;
-//    }
-//
-//    public void setTeamId(Long teamId) {
-//        this.teamId = teamId;
-//    }
-
     public Team getTeam() {
         return team;
     }
@@ -51,20 +40,5 @@ public class Member {
     public void setTeam(Team team) {
         this.team = team;
     }
-
-//    public void changeTeam(Team team) {
-//        this.team = team;
-//        team.getMembers().add(this);
-//    }
-
-
-//    @Override
-//    public String toString() {
-//        return "Member{" +
-//                "id=" + id +
-//                ", username='" + username + '\'' +
-//                ", team=" + team +
-//                '}';
-//    }
 
 }
