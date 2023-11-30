@@ -17,18 +17,24 @@ public class JpabasicMain {
         tx.begin();
 
         try {
-//            // 특정 엔티티만 준영속 >>  select문만 출력되고 update문은 출력되지 않는다.
-//            Member member = em.find(Member.class, 200L);
-//            member.setName("member222");
-//            em.detach(member); // 더이상 JPA가 관리하지 않음
+//            Member member = new Member();
+//            member.setId(1L);
+//            member.setUsername("A");
+//            member.setRoleType(RoleType.USER);
 
-            // 모든 엔티티 준영속 >> select문 두번 출력
-            Member member = em.find(Member.class, 200L); // select문 첫번째
-            member.setName("member222");
-            em.clear();
-            Member member2 = em.find(Member.class, 200L); // select문 두번째
+            // RoleType에 GUEST 추가
 
-            System.out.println("==============");
+//            Member member = new Member();
+//            member.setId(2L);
+//            member.setUsername("B");
+//            member.setRoleType(RoleType.GUEST);
+
+            Member member = new Member();
+            member.setId(3L);
+            member.setUsername("C");
+            member.setRoleType(RoleType.USER);
+
+            em.persist(member);
 
             tx.commit();
 
