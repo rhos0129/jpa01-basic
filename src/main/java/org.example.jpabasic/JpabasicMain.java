@@ -17,10 +17,17 @@ public class JpabasicMain {
         tx.begin();
 
         try {
-            // 플러시 직접호출 >> 구분선 전에 insert문 출력
-            Member member = new Member(200L, "member200");
-            em.persist(member);
-            em.flush();
+//            // 특정 엔티티만 준영속 >>  select문만 출력되고 update문은 출력되지 않는다.
+//            Member member = em.find(Member.class, 200L);
+//            member.setName("member222");
+//            em.detach(member); // 더이상 JPA가 관리하지 않음
+
+            // 모든 엔티티 준영속 >> select문 두번 출력
+            Member member = em.find(Member.class, 200L); // select문 첫번째
+            member.setName("member222");
+            em.clear();
+            Member member2 = em.find(Member.class, 200L); // select문 두번째
+
             System.out.println("==============");
 
             tx.commit();
