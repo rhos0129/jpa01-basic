@@ -17,30 +17,28 @@ public class JpabasicMain {
         tx.begin();
 
         try {
-            // IDENTITY 전략은 예외적으로 구분선 전에 insert문이 출력된다.
-            // SEQUENCE 전략의 allocationSize = 3 테스트
-            // => create sequence member_seq start with 1 increment by 3 >> 시퀀스현재값 1
-            Member member1 = new Member();
-            member1.setUsername("A");
-            em.persist(member1); // call next value for member_seq *2 >> 시퀀스현재값 4, 7
+            // 저장
+            Team team = new Team();
+            team.setName("TeamA");
+            em.persist(team);
 
-            Member member2 = new Member();
-            member2.setUsername("B");
-            em.persist(member2); // call next value for member_seq *0
+            Member member = new Member();
+            member.setUsername("member1");
+//            member.setTeamId(team.getId()); // 연관관계가 필요한 이유 : 객체지향적이지 않다.
+            member.setTeam(team); // 연관관계 적용
+            em.persist(member);
 
-            Member member3 = new Member();
-            member3.setUsername("C");
-            em.persist(member3); // call next value for member_seq *0
+            // select문 조회하기 위해 추가
+            em.flush();
+            em.clear();
 
-            Member member4 = new Member();
-            member4.setUsername("D");
-            em.persist(member4); // call next value for member_seq *1 >> 시퀀스현재값 11
+            // 조회
+            Member findMember = em.find(Member.class, member.getId());
 
-            Member member5 = new Member();
-            member5.setUsername("E");
-            em.persist(member5); // call next value for member_seq *0
+//            Long findTeamId = findMember.getTeamId();
+//            Team findTeam = em.find(Team.class, findTeamId); // 연관관계가 필요한 이유 : Join을 이용하지 않고 각각 select문 2번
+            Team findTeam = findMember.getTeam(); // 연관관계 적용 : Join을 이용하여 select문 1번
 
-            System.out.println("========");
 
             tx.commit();
 
