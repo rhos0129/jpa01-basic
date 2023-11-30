@@ -17,7 +17,19 @@
             <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.use_sql_comments" value="true"/>
             <property name="hibernate.jdbc_batch_size" value="10"/>
-<!--            <property name="hibernate.hbm2ddl.auto" value="create" />-->
+
+            <!-- drop 후 create -->
+            <property name="hibernate.hbm2ddl.auto" value="create" />
+            <!-- create 후 drop -->
+<!--            <property name="hibernate.hbm2ddl.auto" value="create-drop" />-->
+            <!-- 컬럼 추가시에만 alter -->
+<!--            <property name="hibernate.hbm2ddl.auto" value="update" />-->
+            <!-- 엔티티와 테이블 정상매핑 확인 -->
+<!--            <property name="hibernate.hbm2ddl.auto" value="validate" />-->
+            <!-- 사용안함 -->
+<!--            <property name="hibernate.hbm2ddl.auto" value="none" />-->
+
+
         </properties>
     </persistence-unit>
 </persistence>
