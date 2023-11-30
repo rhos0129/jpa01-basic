@@ -17,24 +17,30 @@ public class JpabasicMain {
         tx.begin();
 
         try {
-//            Member member = new Member();
-//            member.setId(1L);
-//            member.setUsername("A");
-//            member.setRoleType(RoleType.USER);
+            // IDENTITY 전략은 예외적으로 구분선 전에 insert문이 출력된다.
+            // SEQUENCE 전략의 allocationSize = 3 테스트
+            // => create sequence member_seq start with 1 increment by 3 >> 시퀀스현재값 1
+            Member member1 = new Member();
+            member1.setUsername("A");
+            em.persist(member1); // call next value for member_seq *2 >> 시퀀스현재값 4, 7
 
-            // RoleType에 GUEST 추가
+            Member member2 = new Member();
+            member2.setUsername("B");
+            em.persist(member2); // call next value for member_seq *0
 
-//            Member member = new Member();
-//            member.setId(2L);
-//            member.setUsername("B");
-//            member.setRoleType(RoleType.GUEST);
+            Member member3 = new Member();
+            member3.setUsername("C");
+            em.persist(member3); // call next value for member_seq *0
 
-            Member member = new Member();
-            member.setId(3L);
-            member.setUsername("C");
-            member.setRoleType(RoleType.USER);
+            Member member4 = new Member();
+            member4.setUsername("D");
+            em.persist(member4); // call next value for member_seq *1 >> 시퀀스현재값 11
 
-            em.persist(member);
+            Member member5 = new Member();
+            member5.setUsername("E");
+            em.persist(member5); // call next value for member_seq *0
+
+            System.out.println("========");
 
             tx.commit();
 
