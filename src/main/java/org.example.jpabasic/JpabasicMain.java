@@ -20,49 +20,26 @@ public class JpabasicMain {
         tx.begin();
 
         try {
-            Team team = new Team();
-            team.setName("teamA");
-            em.persist(team);
 
-            Member member = new Member();
-            member.setUsername("memberA");
-            member.setTeam(team);
-            em.persist(member);
+            Child child1 = new Child();
+            Child child2 = new Child();
 
-            Team team2 = new Team();
-            team2.setName("teamB");
-            em.persist(team2);
-
-            Member member2 = new Member();
-            member2.setUsername("memberB");
-            member2.setTeam(team2);
-            em.persist(member2);
+            Parent parent = new Parent();
+            parent.addChild(child1);
+            parent.addChild(child2);
 
             em.flush();
             em.clear();
 
-            // Lazy >> join없이 member만
-            // Eager >> join으로 member, team 모두
-            Member findMember = em.find(Member.class, member.getId());
+            // 영속성 전이
+            em.persist(parent);
+            em.persist(child1);
+            em.persist(child2);
 
-            // Lazy >> 프록시
-            // Eager >> 원본객체
-            System.out.println("findMember.team" + findMember.getTeam().getClass());
-
-            // Lazy >> team select문 출력
-            // Eager >> 추가 select문 없음
-            System.out.println("========");
-            System.out.println("member.team.name = " + findMember.getTeam().getName());
-            System.out.println("========");
-
-            // Eager는 select문이 N+1번 출력되므로 실무에서 사용하지 말자
-            // >> JPQL의 N+1 문제
-            // >> select * from member *1
-            // >> select * from team where team_id = ?  *N
-            // Lazy는 select문이 한번만 출력
-            List<Member> members = em.createQuery("select m from Member m", Member.class)
-                    .getResultList();
-
+            // 고아객체
+            Parent findParent = em.find(Parent.class, parent.getId());
+            findParent.getChildren().remove(child1); // child1도 같이 삭제
+            em.remove(findParent); // 모든 child 삭제
 
             tx.commit();
 
