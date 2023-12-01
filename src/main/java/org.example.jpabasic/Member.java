@@ -1,8 +1,6 @@
 package org.example.jpabasic;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Member extends BaseEntity {
@@ -15,8 +13,9 @@ public class Member extends BaseEntity {
     @Column(name = "USERNAME")
     private String username;
 
-    @ManyToOne // 일대다 양방향
-    @JoinColumn(insertable = false, updatable = false) // 억지로 읽기전용으로 만든다.
+    @ManyToOne(fetch = FetchType.LAZY) // 지연 로딩 LAZY >> join없이 Team을 프록시로 조회
+//    @ManyToOne(fetch = FetchType.EAGER) // 즉시 로딩 EAGER >> join해서 Team도 원본 엔티티로 조회
+    @JoinColumn(name = "TEAM_ID")
     private Team team;
 
     public Long getId() {

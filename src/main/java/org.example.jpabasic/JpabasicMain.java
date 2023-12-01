@@ -7,6 +7,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class JpabasicMain {
 
@@ -19,93 +20,48 @@ public class JpabasicMain {
         tx.begin();
 
         try {
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
 
             Member member = new Member();
-            member.setUsername("aaa");
+            member.setUsername("memberA");
+            member.setTeam(team);
             em.persist(member);
 
+            Team team2 = new Team();
+            team2.setName("teamB");
+            em.persist(team2);
+
             Member member2 = new Member();
-            member2.setUsername("bbb");
+            member2.setUsername("memberB");
+            member2.setTeam(team2);
             em.persist(member2);
 
             em.flush();
             em.clear();
 
-//            // ==========
-//            // select문 출력
-//            Member findMember = em.find(Member.class, member.getId());
-//
-//            // id값은 가지고 있으므로 select문 출력 안함
-//            Member referenceMember = em.getReference(Member.class, member.getId());
-//            System.out.println("referenceMember = " + referenceMember.getClass()); // class org.example.jpabasic.Member$HibernateProxy$fw0TcFAE (가짜엔티티 프록시)
-//            System.out.println("referenceMember.id = " + referenceMember.getId());
-//
-//            // findMember를 실제 사용하는 시점에 영속성컨텍스트에게 초기화 요청 후 select문 출력함
-//            System.out.println("referenceMember.username = " + referenceMember.getUsername());
-//
-//            // 초기화되어 있으므로 select문 출력 안함
-//            System.out.println("referenceMember.username = " + referenceMember.getUsername());
+            // Lazy >> join없이 member만
+            // Eager >> join으로 member, team 모두
+            Member findMember = em.find(Member.class, member.getId());
 
+            // Lazy >> 프록시
+            // Eager >> 원본객체
+            System.out.println("findMember.team" + findMember.getTeam().getClass());
 
-//            // ==========
-//            // 프록시 객체는 원본 엔티티를 상속받으므로 타입 체크시 주의
-//            // == 비교 실패, instance of 사용
-//
-//            Member findMember = em.find(Member.class, member.getId());
-//            Member referenceMember2 = em.getReference(Member.class, member2.getId());
-//
-//            logic(findMember, referenceMember2);
+            // Lazy >> team select문 출력
+            // Eager >> 추가 select문 없음
+            System.out.println("========");
+            System.out.println("member.team.name = " + findMember.getTeam().getName());
+            System.out.println("========");
 
-
-//            // ==========
-//            // 영속성 컨텍스트에 찾는 엔티티가 이미 있으면 em.getReference()를 호출해도 실제 엔티티 반환
-//            Member findMember = em.find(Member.class, member.getId());
-//            System.out.println("findMember = " + findMember.getClass()); // class org.example.jpabasic.Member (원본 엔티티)
-//
-//            Member referenceMember = em.getReference(Member.class, 2.getId());
-//            System.out.println("referenceMember = " + referenceMember.getClass()); // class org.example.jpabasic.Member (원본 엔티티)
-//
-//            // JPA는 동일성을 보장해야하기 때문
-//            System.out.println("findMember == referenceMember : " + (findMember == referenceMember )); // true
-
-
-//            // ==========
-//            // 반대도 마찬가지임
-//            Member referenceMember = em.getReference(Member.class, member.getId());
-//            System.out.println("referenceMember = " + referenceMember.getClass()); // 프록시
-//
-//            Member findMember = em.find(Member.class, member.getId());
-//            System.out.println("findMember = " + findMember.getClass()); // 원본 엔티티가 아님 프록시
-//
-//            // 동일성 보장됨
-//            System.out.println("referenceMember == findMember : " + (referenceMember == findMember )); // true
-
-
-//            // ==========
-//            // 영속성 컨텍스트의 도움을 받을 수 없는 상태일 때 프록시를 초기화하면 문제 발생
-//            Member referenceMember = em.getReference(Member.class, member.getId());
-//            System.out.println("referenceMember = " + referenceMember.getClass()); // 프록시
-//
-////            em.detach(referenceMember); // 준영속
-//            em.clear();
-//
-//            System.out.println("referenceMember.username = " + referenceMember.getUsername());
-//            // >> 에러 발생 : org.hibernate.LazyInitializationException: could not initialize proxy [org.example.jpabasic.Member#43] - no Session
-
-
-            // ==========
-            Member referenceMember = em.getReference(Member.class, member.getId());
-            System.out.println("referenceMember = " + referenceMember.getClass()); // 프록시
-//            System.out.println("referenceMember.username = " + referenceMember.getUsername()); // 프록시 강제 초기화
-
-            // 프록시 인스턴스의 초기화 여부 확인
-            System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(referenceMember));
-
-            // 프록시 클래스 확인 방법
-            System.out.println("name = " + referenceMember.getClass().getName());
-
-            // 프록시 강제 초기화 (JPA 표준은 강제 초기화 없음)
-            Hibernate.initialize(referenceMember);
+            // Eager는 select문이 N+1번 출력되므로 실무에서 사용하지 말자
+            // >> JPQL의 N+1 문제
+            // >> select * from member *1
+            // >> select * from team where team_id = ?  *N
+            // Lazy는 select문이 한번만 출력
+            List<Member> members = em.createQuery("select m from Member m", Member.class)
+                    .getResultList();
 
 
             tx.commit();
