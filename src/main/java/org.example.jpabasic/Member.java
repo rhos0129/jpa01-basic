@@ -19,17 +19,6 @@ public class Member extends BaseEntity {
     @JoinColumn(insertable = false, updatable = false) // 억지로 읽기전용으로 만든다.
     private Team team;
 
-    @OneToOne // 일대일 단방향 - 주테이블에 외래키
-    @JoinColumn(name = "LOCKER_ID")
-    private Locker locker;
-
-//    @ManyToMany // 다대다 단방향
-//    @JoinTable(name = "MEMBER_PRODUCT") // 중간테이블 create문
-//    private List<Product> products = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member") // 다대다 한계 극복
-    private List<MemberProduct> memberProducts = new ArrayList<>();
-
     public Long getId() {
         return id;
     }
@@ -54,28 +43,4 @@ public class Member extends BaseEntity {
         this.team = team;
     }
 
-    public Locker getLocker() {
-        return locker;
-    }
-
-    public void setLocker(Locker locker) {
-        this.locker = locker;
-    }
-
-//    public List<Product> getProducts() {
-//        return products;
-//    }
-//
-//    public void setProducts(List<Product> products) {
-//        this.products = products;
-//    }
-
-
-    public List<MemberProduct> getMemberProducts() {
-        return memberProducts;
-    }
-
-    public void setMemberProducts(List<MemberProduct> memberProducts) {
-        this.memberProducts = memberProducts;
-    }
 }
