@@ -20,11 +20,38 @@ public class JpabasicMain {
         tx.begin();
 
         try {
-            Member member = new Member();
-            member.setUsername("hello");
-            member.setHomeAddress(new Address("city", "street", "zipcode"));
-            member.setWorkPeriod(new Period());
-            em.persist(member);
+
+            Address address = new Address("city", "street", "zipcode");
+
+            Member member1 = new Member();
+            member1.setUsername("member1");
+            member1.setHomeAddress(address); // *
+            em.persist(member1);
+
+//            // 임베디드 타입 같은 값 타입을 여러 엔티티에서 공유하면 위험하다 =====
+//            Member member2 = new Member();
+//            member2.setUsername("member2");
+//            member2.setHomeAddress(address); // *
+//            em.persist(member2);
+//
+//            member1.getHomeAddress().setCity("newCity"); // update문 *2 (사이드 이펙트 발생)
+
+
+//            // 대신 값(인스턴스)를 복사해서 사용해야 한다. =====
+//            Address copyAddress = new Address(
+//                    address.getCity(), address.getStreet(), address.getZipcode());
+//
+//            Member member3 = new Member();
+//            member3.setUsername("member3");
+//            member3.setHomeAddress(copyAddress);
+//            em.persist(member3);
+//
+//            member1.getHomeAddress().setCity("newCity"); // update문 *1
+
+            // 불변객체 =====
+            Address copyAddress = new Address(
+                    address.getCity(), address.getStreet(), address.getZipcode());
+            member1.setHomeAddress(copyAddress);
 
             tx.commit();
 

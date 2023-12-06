@@ -27,14 +27,6 @@ public class Member extends BaseEntity {
     @Enumerated
     private Address homeAddress;
 
-    @Enumerated
-    @AttributeOverrides({ // 테이블의 컬럼명이 중복되므로 재정의
-            @AttributeOverride(name = "city", column = @Column(name = "WORK_CITY")),
-            @AttributeOverride(name = "street", column = @Column(name = "WORK_STREET")),
-            @AttributeOverride(name = "zipcode", column = @Column(name = "WORK_ZIPCODE")),
-    })
-    private Address workAddress;
-
     public Long getId() {
         return id;
     }
@@ -67,11 +59,4 @@ public class Member extends BaseEntity {
         this.homeAddress = homeAddress;
     }
 
-    public Address getWorkAddress() {
-        return workAddress;
-    }
-
-    public void setWorkAddress(Address workAddress) {
-        this.workAddress = workAddress;
-    }
 }
