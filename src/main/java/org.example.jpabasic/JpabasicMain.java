@@ -21,37 +21,49 @@ public class JpabasicMain {
 
         try {
 
-            Address address = new Address("city", "street", "zipcode");
+            // 값타입 저장 ==========
+            Member member = new Member();
+            member.setUsername("member");
+            member.setHomeAddress(new Address("home", "street", "zipcode"));
 
-            Member member1 = new Member();
-            member1.setUsername("member1");
-            member1.setHomeAddress(address); // *
-            em.persist(member1);
+            member.getFavoriteFoods().add("치킨");
+            member.getFavoriteFoods().add("족발");
+            member.getFavoriteFoods().add("보쌈");
 
-//            // 임베디드 타입 같은 값 타입을 여러 엔티티에서 공유하면 위험하다 =====
-//            Member member2 = new Member();
-//            member2.setUsername("member2");
-//            member2.setHomeAddress(address); // *
-//            em.persist(member2);
+//            member.getAddressHistory().add(new Address("old1", "street", "zipcode"));
+//            member.getAddressHistory().add(new Address("old2", "street", "zipcode"));
+            // 일대다로 변경 >> update문 (연관관계 참고)
+            member.getAddressHistory().add(new AddressEntity("old1", "street", "zipcode"));
+            member.getAddressHistory().add(new AddressEntity("old2", "street", "zipcode"));
+
+            em.persist(member); // insert문 *6 (값타입은 모두 member에 의존)
+
+            em.flush();
+            em.clear();
+
+
+            // 값타입 조회 ==========
+            Member findMember = em.find(Member.class, member.getId()); // select member > 지연로딩
+//            List<Address> addressHistory = findMember.getAddressHistory(); // select address > 지연로딩
+//            for (Address address : addressHistory) {
+//                System.out.println("address.city = " + address.getCity());
+//            }
 //
-//            member1.getHomeAddress().setCity("newCity"); // update문 *2 (사이드 이펙트 발생)
-
-
-//            // 대신 값(인스턴스)를 복사해서 사용해야 한다. =====
-//            Address copyAddress = new Address(
-//                    address.getCity(), address.getStreet(), address.getZipcode());
 //
-//            Member member3 = new Member();
-//            member3.setUsername("member3");
-//            member3.setHomeAddress(copyAddress);
-//            em.persist(member3);
+//            // 값타입 수정 ==========
+////            findMember.getHomeAddress().setCity("newCity"); // X
+//            Address a = findMember.getHomeAddress();
+//            findMember.setHomeAddress(new Address("new", a.getStreet(), a.getZipcode()));
 //
-//            member1.getHomeAddress().setCity("newCity"); // update문 *1
-
-            // 불변객체 =====
-            Address copyAddress = new Address(
-                    address.getCity(), address.getStreet(), address.getZipcode());
-            member1.setHomeAddress(copyAddress);
+//            // 값 타입 컬렉션은 영속성 전이와 고아 객체 제거 기능을 필수로 가진다
+//            findMember.getFavoriteFoods().remove("치킨"); // delete
+//            findMember.getFavoriteFoods().add("한식"); // insert
+//
+//            // equals 기준 (컬렉션 다룰때는 꼭 오버라이딩 해야한다.)
+//            findMember.getAddressHistory().remove(new Address("old1", "street", "zipcode")); // delete from ADDRESS where MEMBER_ID=?
+//            findMember.getAddressHistory().add(new Address("old3", "street", "zipcode")); // insert *2
+//            // 주인 엔티티와 연관된 모든 데이터를 삭제하고, 값 타입 컬렉션에 있는 현재 값을 모두 다시 저장한다.\
+//            // >> 실무에서는 일대다를 고려하자
 
             tx.commit();
 
