@@ -1,6 +1,7 @@
 package org.example.jpabasic;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 public class Member extends BaseEntity {
@@ -13,10 +14,26 @@ public class Member extends BaseEntity {
     @Column(name = "USERNAME")
     private String username;
 
-    @ManyToOne(fetch = FetchType.LAZY) // 지연 로딩 LAZY >> join없이 Team을 프록시로 조회
-//    @ManyToOne(fetch = FetchType.EAGER) // 즉시 로딩 EAGER >> join해서 Team도 원본 엔티티로 조회
-    @JoinColumn(name = "TEAM_ID")
-    private Team team;
+    // 기간 Period
+//    private LocalDateTime startDate;
+//    private LocalDateTime endDate;
+    @Embedded
+    private Period workPeriod;
+
+    // 주소 Address
+//    private String city;
+//    private String street;
+//    private String zipcode;
+    @Enumerated
+    private Address homeAddress;
+
+    @Enumerated
+    @AttributeOverrides({ // 테이블의 컬럼명이 중복되므로 재정의
+            @AttributeOverride(name = "city", column = @Column(name = "WORK_CITY")),
+            @AttributeOverride(name = "street", column = @Column(name = "WORK_STREET")),
+            @AttributeOverride(name = "zipcode", column = @Column(name = "WORK_ZIPCODE")),
+    })
+    private Address workAddress;
 
     public Long getId() {
         return id;
@@ -34,12 +51,27 @@ public class Member extends BaseEntity {
         this.username = username;
     }
 
-    public Team getTeam() {
-        return team;
+    public Period getWorkPeriod() {
+        return workPeriod;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    public void setWorkPeriod(Period workPeriod) {
+        this.workPeriod = workPeriod;
     }
 
+    public Address getHomeAddress() {
+        return homeAddress;
+    }
+
+    public void setHomeAddress(Address homeAddress) {
+        this.homeAddress = homeAddress;
+    }
+
+    public Address getWorkAddress() {
+        return workAddress;
+    }
+
+    public void setWorkAddress(Address workAddress) {
+        this.workAddress = workAddress;
+    }
 }
